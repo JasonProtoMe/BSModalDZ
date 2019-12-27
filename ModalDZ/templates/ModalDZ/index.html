@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load crispy_forms_tags %}
+<head>
+    <meta charset="UTF-8">
+    <!-- Initialize Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Initialize bootstrap -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <!-- As working with Django static files, input load static tag and process files -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'ModalDZ/css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'ModalDZ/css/dropzone.css' %}">
+    <script type="text/javascript" src="{% static 'ModalDZ/js/dropzone.js' %}"></script>
+
+    <title>Title</title>
+</head>
+
+<body>
+
+
+<hr class="mt-0 mb-4">
+<!-- A simple button to open the modal -->
+<div id="openModal">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-md">
+                <h1 class="mt-2">BIG TITLE</h1>
+                <hr class="mt-0 mb-4">
+            </div>
+        </div>
+        <div class="row justify-content-center text-center">
+            <button id="openModalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1">Open Modal</button>
+        </div>
+    </div>
+</div>
+
+{#    modal 1#}
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Modal body text goes here.</p>
+                <form id="dropzoneForm" action="dropzoneForm" action="/BSModalDZ/" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div name="dropzone" id="dropzoneId" class="dropzone">
+                        <div class="fallback">
+                            <input name="files" type="files" multiple/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="close" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id="next" class="btn btn-primary btn-next">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Modal body text or additional form content.<br><br>Default: Modal will not submit if Dropzone is empty</p>
+{#                <div class="content-section">#}
+{#                    <form method="POST">#}
+{#                        {% csrf_token %}#}
+{#                        {{ informationForm|crispy }}#}
+{#                    </form>#}
+{#                </div>#}
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="previous" class="btn btn-default btn-prev">Previous</button>
+                <button type="submit" id="submit" name="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script type="text/javascript">
+    // dropzone server connection
+    Dropzone.autoDiscover = false;
+
+    new Dropzone("#dropzoneId", {
+        url: 'http://127.0.0.1:8000/ModalDZ/',
+        method: "post",
+        uploadMultiple: true,
+        parallelUploads: 100,
+        maxFiles: 100,
+        clickable: true,
+        dictDefaultMessage: "Drop files here or click to upload",
+        dictFallbackMessage: "Your browser does not support drag and drop file uploads",
+        dictFallbackText: "Please use the manually select and upload files",
+        dictFileTooBig: "File is too big ( GB). Max file size:  GB",
+        dictInvalidFileType: "You can't upload files of this type",
+        dictResponseError: "Server responded with  code:",
+        dictCancelUpload: "Cancel upload",
+        dictRemoveFile: "Remove",
+        autoProcessQueue: false,
+        addRemoveLinks: true,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        init: function() {
+            var submitButton = document.querySelector('#submit')
+            var myDropzone = this;
+
+            submitButton.addEventListener("click", function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                myDropzone.processQueue();
+            });
+
+            this.on("complete", function(file) {
+                this.removeFile(file);
+                $("div[id^='myModal']").each(function(){
+                    $(this).modal('hide');
+                });
+            });
+
+            this.on("success", function(files, response) {
+                console.log(response);
+            });
+
+            this.on("sending", function(files, xhr, data) {
+                data.append('csrfmiddlewaretoken', document.getElementsByName('csrfmiddlewaretoken')[0].value);
+            });
+
+            this.on('addedfile', function(files) {
+                // check if compression files
+            });
+
+            this.on("error", function(files, response) {
+                // error on any other error
+                alert(response);
+                if (response.indexOf('Error 404') !== -1) {
+                    var errorDisplay = document.querySelectorAll('[data-dz-errormessage]');
+                    errorDisplay[errorDisplay.length - 1].innerHTML = 'Error 404: The upload page was not found on the server';
+                }
+                this.removeFile(files);
+            })
+        }
+    });
+
+    $("div[id^='myModal']").each(function(){
+        var currentModal = $(this);
+
+        //click next
+        currentModal.find('.btn-next').click(function(){
+            currentModal.modal('hide');
+            currentModal.closest("div[id^='myModal']").nextAll("div[id^='myModal']").first().modal('show');
+        });
+
+        //click prev
+        currentModal.find('.btn-prev').click(function(){
+            currentModal.modal('hide');
+            currentModal.closest("div[id^='myModal']").prevAll("div[id^='myModal']").first().modal('show');
+        });
+
+    });
+
+</script>
+
+</html>

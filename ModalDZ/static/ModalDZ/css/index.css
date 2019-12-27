@@ -1,0 +1,13 @@
+#openModal {
+    margin: auto;
+    background-color: white;
+    width: 1080px;
+    height: 140px;
+    border-radius: 20px;
+}
+
+#openModalButton {
+    position: absolute;
+    top: 120px;
+    right: 15%;
+}
