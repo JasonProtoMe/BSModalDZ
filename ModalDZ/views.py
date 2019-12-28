@@ -15,6 +15,7 @@ def index(request):
         info_form = InfoForm(request.POST)
         if info_form.is_valid():
             savefiles(request)
+            print(request.POST.get)
         return HttpResponse(context)
 
     # different request method (ie. GET request)

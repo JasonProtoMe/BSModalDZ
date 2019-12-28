@@ -129,18 +129,23 @@
             });
 
             this.on("complete", function(file) {
+
+            });
+
+            this.on("success", function(files, response) {
                 this.removeFile(file);
                 $("div[id^='myModal']").each(function(){
                     $(this).modal('hide');
                 });
             });
 
-            this.on("success", function(files, response) {
-                console.log(response);
-            });
-
             this.on("sending", function(files, xhr, data) {
                 data.append('csrfmiddlewaretoken', document.getElementsByName('csrfmiddlewaretoken')[0].value);
+
+                data.append('first_name', document.getElementById('id_first_name').value);
+                data.append('last_name', document.getElementById('id_last_name').value);
+                data.append('date', document.getElementById('id_date').value);
+                data.append('checkbox', document.getElementById('id_checkbox').value);
             });
 
             this.on('addedfile', function(files) {
