@@ -25,4 +25,4 @@ def savefiles(request):
     file_path = os.path.join(os.getcwd(), 'media/')
 
     for file in uploaded_files:
-        default_storage.save(file_path, ContentFile(file.read()))
+        default_storage.save(os.path.join(file_path, str(file)), ContentFile(file.read()))

@@ -143,8 +143,16 @@
                 data.append('csrfmiddlewaretoken', document.getElementsByName('csrfmiddlewaretoken')[0].value);
             });
 
+            this.on('sendingmultiple', function() {
+                // sendingmultiple to hide submit button
+            });
+
+            this.on('successmultiple', function(files, response) {
+                // successmultiple to reload the page (and show the updated info)
+            });
+
             this.on('addedfile', function(files) {
-                // check if compression files
+                // Any pre-check
             });
 
             this.on("error", function(files, response) {
