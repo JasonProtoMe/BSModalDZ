@@ -75,13 +75,13 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Modal body text or additional form content.<br><br>Default: Modal will not submit if Dropzone is empty</p>
-{#                <div class="content-section">#}
-{#                    <form method="POST">#}
-{#                        {% csrf_token %}#}
-{#                        {{ informationForm|crispy }}#}
-{#                    </form>#}
-{#                </div>#}
+                <p>Default: Modal will not submit if Dropzone is empty</p>
+                <div id="formbody">
+                    <form id="info_form" action="ModalDZ" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ info_form|crispy }}
+                    </form>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" id="close" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -141,14 +141,6 @@
 
             this.on("sending", function(files, xhr, data) {
                 data.append('csrfmiddlewaretoken', document.getElementsByName('csrfmiddlewaretoken')[0].value);
-            });
-
-            this.on('sendingmultiple', function() {
-                // sendingmultiple to hide submit button
-            });
-
-            this.on('successmultiple', function(files, response) {
-                // successmultiple to reload the page (and show the updated info)
             });
 
             this.on('addedfile', function(files) {
