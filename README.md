@@ -3,7 +3,7 @@ Simple integration example of Bootstrap Modal & Dronzone.js.
 Open modal, click and drop file(s), and see it uploaded (upon success) in your Django project's media file.
 
 ### Installation
-No additional installation necessary. The code was made from a skeleton Django project and app.
+Please make sure you have Django installed as well have access to jQuery and Bootstrap.
 
 ### Usage
 Currently, the project shows successful integration between Dropzone.JS inside a Boostrap Modal with transfer of files in a Django backend. Any and all code can be used for your own purpose :) Additional functionalities will be added in future; check Backlog for more information.
