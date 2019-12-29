@@ -136,7 +136,8 @@
             });
 
             this.on("complete", function(file) {
-
+                $('.progress-bar').css('width', '0%').attr('aria-valuenow', 0);
+                document.getElementById("progress").style.display="none"
             });
 
             this.on("success", function(files, response) {
