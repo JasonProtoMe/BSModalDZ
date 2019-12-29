@@ -10,7 +10,7 @@ Currently, the project shows successful integration between Dropzone.JS inside a
 
 ### Backlog
 - Additional form and form information transfer
-- Progress bar and success/error messages
+- Success/error messages
 - Taking requests :)
 
 ### License & Copyright
