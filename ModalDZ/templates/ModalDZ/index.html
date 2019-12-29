@@ -80,6 +80,11 @@
                     <form id="info_form" action="ModalDZ" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ info_form|crispy }}
+                        <div class="progress" id="progress" style="height:24px; margin-top:24px;">
+                            <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                                <span class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></span>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -95,6 +100,8 @@
 </body>
 
 <script type="text/javascript">
+    document.getElementById("progress").style.display="none";
+
     // dropzone server connection
     Dropzone.autoDiscover = false;
 
@@ -133,10 +140,14 @@
             });
 
             this.on("success", function(files, response) {
-                this.removeFile(file);
+                this.removeFile(files);
                 $("div[id^='myModal']").each(function(){
                     $(this).modal('hide');
                 });
+            });
+
+            this.on("totaluploadprogress", function(progress) {
+                document.querySelector("#progress .progress-bar").style.width = progress + "%";
             });
 
             this.on("sending", function(files, xhr, data) {
@@ -146,6 +157,8 @@
                 data.append('last_name', document.getElementById('id_last_name').value);
                 data.append('date', document.getElementById('id_date').value);
                 data.append('checkbox', document.getElementById('id_checkbox').value);
+
+                document.getElementById("progress").style.display="";
             });
 
             this.on('addedfile', function(files) {
